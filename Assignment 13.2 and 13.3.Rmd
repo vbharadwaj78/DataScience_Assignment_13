@@ -1,0 +1,213 @@
+---
+title: "Assignment No 13.2 and 13.3"
+author: "Vineet Bhardwaj"
+date: "19 February 2019"
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+
+#ASSIGNMENT NO # 13.2
+#a.	Create a linear regression model to predict the number of comments in the next 24 hours (relative to base time). 
+#b.	Fine tune the model and represent important features Visualize the dataset and make inferences from that. 
+#c.	Interpret the summary of the linear model. 
+#d.	Report the test accuracy vs. the training accuracy 
+#ASSIGNMENT NO # 13.3
+#a. a.	Interpret the final model coefficients. 
+#b.	Plot the model result and compare it with assumptions of the model
+
+
+#setting the Working directory
+setwd("C:/Users/Vineet Bhardwaj/Desktop/BlogFeedbackNew")
+
+#loading all the required libraries
+library(ISLR)
+library(tidyverse)
+library(tidyr)
+
+train_sg<- read.csv('train_sg.csv', header = TRUE)
+test_sg<- read.csv('test_sg.csv', header = TRUE)
+
+View(train_sg)
+View(test_sg)
+str(train_sg)
+
+write.csv(train_sg,'train_sg2.csv') 
+write.csv(test_sg,'test_sg2.csv')
+```
+
+```{r}
+pairs(train_sg)
+```
+
+```{r}
+pairs(test_sg)
+```
+
+```{r}
+hist(train_sg$y,col='red')
+```
+
+```{r}
+hist(train_sg$meta_rf,col="purple")
+```
+
+```{r}
+library(tree) 
+tree.train_sg<-tree(meta_knn~.-meta_rf,train_sg) 
+summary(tree.train_sg)
+```
+
+```{r}
+hist(test_sg$y,col='green')
+```
+
+```{r}
+hist(test_sg$meta_rf,col="yellow")
+```
+
+```{r}
+tree.test_sg<-tree(meta_knn~.-meta_rf,test_sg) 
+summary(tree.test_sg)
+```
+
+```{r}
+plot(tree.train_sg) 
+text(tree.train_sg,pretty = 0)
+```
+
+```{r}
+plot(tree.test_sg) 
+text(tree.test_sg,pretty = 0)
+```
+
+```{r}
+t.test(train_sg$meta_knn,mu=0.6)
+```
+
+```{r}
+t.test(train_sg$meta_rf, mu=0.7)
+```
+
+```{r}
+t.test(train_sg$meta_rf,mu=0.5,conf.level =0.80 )
+```
+
+```{r}
+t.test(train_sg$y, mu=0.5)
+```
+
+```{r}
+t.test(test_sg$meta_knn,mu=0.6)
+```
+
+```{r}
+t.test(test_sg$meta_rf, mu=0.7)
+```
+
+```{r}
+t.test(test_sg$meta_rf,mu=0.5,conf.level =0.80 )
+```
+
+```{r}
+t.test(test_sg$y, mu=0.5)
+```
+
+```{r}
+plot(train_sg$meta_knn,train_sg$meta_rf)
+```
+
+```{r}
+cor(train_sg$meta_knn,train_sg$meta_rf)
+```
+
+```{r}
+mod<-lm(train_sg$meta_knn~train_sg$meta_rf) 
+summary(mod)
+```
+
+```{r}
+predict(mod)
+```
+
+```{r}
+pred<-predict(mod) 
+train_sg$predicted = NA 
+train_sg$predicted = pred 
+```
+
+```{r}
+library(car)
+dwt(mod)
+```
+
+```{r}
+plot(test_sg$meta_knn,test_sg$meta_rf)
+```
+
+```{r}
+cor(test_sg$meta_knn,test_sg$meta_rf) 
+```
+
+```{r}
+mod<-lm(test_sg$meta_knn~test_sg$meta_rf) 
+summary(mod)
+```
+
+```{r}
+predict(mod)
+```
+
+```{r}
+pred<-predict(mod) 
+test_sg$predicted = NA 
+test_sg$predicted = pred 
+```
+
+```{r}
+library(car) 
+dwt(mod)
+```
+
+```{r}
+plot(train_sg$meta_knn,train_sg$meta_rf,abline(lm(train_sg$meta_knn~train_sg$meta_rf), col="red"))
+```
+
+```{r}
+hist(train_sg$predicted, xlab = "Residuals", main ='Histogram of train Residuals', col="yellow")
+```
+
+```{r}
+plot(test_sg$meta_knn,test_sg$meta_rf,abline(lm(test_sg$meta_knn~test_sg$meta_rf), col="purple"))
+```
+
+```{r}
+hist(test_sg$predicted, xlab = "Residuals", main ='Histogram of test Residuals', col="violet")
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
